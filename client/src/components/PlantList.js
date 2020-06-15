@@ -1,13 +1,15 @@
 import React, { Component} from "react";
 import axios from "axios";
 
+
 export default class PlantList extends Component {
   constructor(props)  {
     super(props);
  
   // add state with a property called "plants" - initialize as an empty array
     this.state = {
-      plants: []
+      plants: [],
+      plantType: "all"
     }
   }
 
@@ -15,15 +17,35 @@ export default class PlantList extends Component {
     axios
       .get(`http://localhost:3333/plants`)
       .then( res => {
-        console.log(res);
-        console.log("Hello");
-        this.setState({plants: res.data.plantsData});
+        console.log(this.props);
+        
+        this.setState({...this.state, plantType: this.props.plantType});
+
+        if(this.state.plantType === "all"){
+          this.setState({plants: res.data.plantsData});
+        }else{
+          const newPlants = res.data.plantsData.filter((plant)=>{
+            return plant.light === this.props.plantType;
+          })
+
+          this.setState({plants: newPlants});
+        }
+
+
+        
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err)
+      , [this.state.plantType]);
 
       //this.setState({plants: res});
 
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.plantType !== this.state.plantType) {
+      console.log(this.state.plantType);
+    }
+  }
 
 
   // when the component mounts:
@@ -33,7 +55,9 @@ export default class PlantList extends Component {
   /*********  DON'T CHANGE ANYTHING IN THE RENDER FUNCTION *********/
   render() {
     return (
+      
       <main className="plant-list">
+        
         {this.state?.plants?.map((plant) => (
           <div className="plant-card" key={plant.id}>
             <img className="plant-image" src={plant.img} alt={plant.name} />

@@ -10,6 +10,7 @@ import "./App.css";
 function App() {
   // array of plants that have been added to the cart
   const [cart, setCart] = useState([]);
+  const [plantType, setPlantType] = useState('all');
 
   // add a plant to the cart
   const addToCart = (plant) => {
@@ -21,6 +22,11 @@ function App() {
     setCart(cart.filter((p) => p.id !== plant.id));
   };
 
+  const handleChange = (event) => {
+    setPlantType({ plantType: event.target.value });
+    console.log(plantType);
+  };
+
   return (
     <div>
       <Router>
@@ -28,6 +34,13 @@ function App() {
           <h1>
             React Plants <span role="img">🌿</span>
           </h1>
+          <label htmlFor="plants">Choose based on light:</label>
+          <select name="plants" id="plants" onChange={handleChange}>>
+          <option value="direct">Direct</option>
+          <option value="indirect">Indirect</option>
+          <option value="low">Low</option>
+          
+        </select>
           <ul className="steps">
             <li>
               <NavLink exact to="/">
@@ -47,7 +60,7 @@ function App() {
         <Route
           exact
           path="/"
-          render={() => <PlantList addToCart={addToCart} />}
+          render={() => <PlantList addToCart={addToCart} plantType={plantType}/>}
         />
         <Route
           path="/cart"
