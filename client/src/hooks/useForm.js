@@ -9,7 +9,7 @@ export const useForm = (key, initialValues) => {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const handleChanges = e => {
-      console.log(e.target.name);
+      //console.log(e.target.name);
       setValue({
         ...storedValue,
         [e.target.name]: e.target.value

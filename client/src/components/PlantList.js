@@ -1,47 +1,64 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 import axios from "axios";
 
 
 export default class PlantList extends Component {
-  constructor(props)  {
+  constructor(props) {
     super(props);
- 
-  // add state with a property called "plants" - initialize as an empty array
+
+    // add state with a property called "plants" - initialize as an empty array
     this.state = {
-      plants: [],
-      plantType: "direct"
+      plants: [], // plants the user will see
+      plantsFromServer: [], // plants to filter then set back to plants
+      plantType: "all"
     }
   }
 
   getPlants() {
     axios
       .get(`http://localhost:3333/plants`)
-      .then( res => {
+      .then(res => {
         console.log(this.props);
-        
-        //this.setState({...this.state, plantType: this.props.plantType});
 
-        if(this.state.plantType === "all"){
+        //maybe I could have a timer to update the plants list from time to time.
+        this.setState({ plantsFromServer: res.data.plantsData, plants: res.data.plantsData });
+        
+        /*if(this.state.plantType === "all"){
           this.setState({plants: res.data.plantsData});
         }else{
-          const newPlants = res.data.plantsData.filter((plant)=>{
+          const filteredPlants = res.data.plantsData.filter((plant)=>{
             return plant.light === this.state.plantType;
           })
 
-          this.setState({plants: newPlants});
-        }
+          this.setState({plants: filteredPlants});
+        }*/
 
 
-        
+
       })
       .catch(err => console.log(err)
-      , [this.state.plantType]);
+      );
 
-      //this.setState({plants: res});
+    //this.setState({plants: res});
+  }
+
+  getFilteredPlants(filter) {
+    if (filter === "all") {
+      this.setState({ plants: this.state.plantsFromServer });
+      return;
+    } else {
+      const filteredPlants = this.state.plantsFromServer.filter((plant) => {
+        return plant.light === filter;
+      })
+
+      this.setState({ plants: filteredPlants });
+    }
+
+
   }
 
   componentWillMount() {
-     this.getPlants(); 
+    this.getPlants();
 
   };
 
@@ -51,14 +68,17 @@ export default class PlantList extends Component {
       this.setState({...this.state, plantType: this.state.plantType});
       
     }*/
+
+    //maybe I could have a timer to update the plants list from time to time.
   }
 
   handleChange = (event) => {
     //setPlantType({ plantType: event.target.value });
-    this.setState({...this.state, plantType: event.target.value});
-    this.getPlants();
+    //this.setState({...this.state, plantType: event.target.value});
+    //this.getPlants();
 
     //console.log(plantType);
+    this.getFilteredPlants(event.target.value);
   };
 
 
@@ -69,16 +89,16 @@ export default class PlantList extends Component {
   /*********  DON'T CHANGE ANYTHING IN THE RENDER FUNCTION *********/
   render() {
     return (
-      
+
       <main className="plant-list">
         <div><label htmlFor="plants">Choose based on light:</label>
           <select name="plants" id="plants" onChange={this.handleChange}>>
           <option value="all">All</option>
-          <option value="direct">Direct</option>
-          <option value="indirect">Indirect</option>
-          <option value="low">Low</option>
-          
-        </select></div>
+            <option value="direct">Direct</option>
+            <option value="indirect">Indirect</option>
+            <option value="low">Low</option>
+
+          </select></div>
         {this.state?.plants?.map((plant) => (
           <div className="plant-card" key={plant.id}>
             <img className="plant-image" src={plant.img} alt={plant.name} />

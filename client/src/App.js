@@ -34,13 +34,7 @@ function App() {
           <h1>
             React Plants <span role="img">🌿</span>
           </h1>
-          <label htmlFor="plants">Choose based on light:</label>
-          <select name="plants" id="plants" onChange={handleChange}>>
-          <option value="direct">Direct</option>
-          <option value="indirect">Indirect</option>
-          <option value="low">Low</option>
           
-        </select>
           <ul className="steps">
             <li>
               <NavLink exact to="/">
@@ -60,7 +54,7 @@ function App() {
         <Route
           exact
           path="/"
-          render={() => <PlantList addToCart={addToCart} plantType={plantType}/>}
+          render={() => <PlantList addToCart={addToCart} />}
         />
         <Route
           path="/cart"
